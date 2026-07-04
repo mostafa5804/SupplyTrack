@@ -1,55 +1,55 @@
 # SupplyTrack (سامانه درخواست کالا)
 
-SupplyTrack is a comprehensive, full-stack inventory and procurement management system designed to streamline the lifecycle of item requests. It provides specific workflows for Requesters, Supervisors, Storekeepers, and Purchasers to ensure accountability and efficiency in resource allocation.
+SupplyTrack یک سیستم جامع و فول‌استک برای مدیریت موجودی و تدارکات است که برای ساده‌سازی چرخه درخواست کالا طراحی شده است. این سیستم با ارائه گردش‌کارهای اختصاصی برای درخواست‌کنندگان، سرپرستان، انبارداران و مسئولین خرید، شفافیت و کارایی در تخصیص منابع را تضمین می‌کند.
 
-## Features
+## ویژگی‌ها
 
-- **Role-Based Workflows:** Distinct interfaces for:
-  - `requester`: Creates requests for items.
-  - `supervisor`: Approves or rejects requests.
-  - `storekeeper`: Checks warehouse inventory, reserves stock, and marks shortages.
-  - `purchaser`: Fulfills shortage items by purchasing them.
-- **Real-Time Dashboards:** Visualizations of inventory trends and request statuses.
-- **Client-Side Filtering:** Searchable tables for fast access to SKU and inventory logs.
-- **Notification System:** In-app toast notifications for critical alerts, such as low inventory thresholds.
-- **Mobile-Responsive:** Tailored UI ensuring a great experience on mobile devices and desktops.
-- **Localization:** Persian number formatting and native UI texts.
+- **گردش‌کارهای مبتنی بر نقش:** رابط‌های کاربری مجزا برای:
+  - `requester` (درخواست‌کننده): ثبت درخواست‌های جدید کالا.
+  - `supervisor` (سرپرست): بررسی و تأیید یا رد درخواست‌ها.
+  - `storekeeper` (انباردار): بررسی موجودی انبار، رزرو کالا و اعلام کسری.
+  - `purchaser` (مسئول خرید): تأمین اقلام کسری از طریق خرید.
+- **داشبوردهای در لحظه:** نمایش نمودارهای روند موجودی و وضعیت درخواست‌ها.
+- **فیلترینگ سمت کاربر:** جداول با قابلیت جستجوی سریع در کالاها و سوابق موجودی.
+- **سیستم اعلان (Notification):** هشدارهای درون‌برنامه‌ای (toast) برای موارد مهم مانند کاهش موجودی از حد نصاب.
+- **طراحی واکنش‌گرا (Responsive):** رابط کاربری سازگار و بهینه برای استفاده در موبایل و دسکتاپ.
+- **بومی‌سازی:** استفاده از اعداد فارسی و متون رابط کاربری کاملاً فارسی.
 
-## Architecture
+## معماری
 
-- **Frontend:** React 18, React Router, Tailwind CSS, Recharts for analytics.
-- **Backend:** Express.js running concurrently with Vite (development) or serving static files (production).
-- **Authentication:** JWT-based secure authentication.
-- **State Management:** React Context API (Auth, Theme, Settings, Toast).
+- **فرانت‌اند:** React 18, React Router, Tailwind CSS, Recharts برای نمودارها.
+- **بک‌اند:** Express.js که به صورت همزمان با Vite (در محیط توسعه) یا برای سرو فایل‌های استاتیک (در محیط پروداکشن) اجرا می‌شود.
+- **احراز هویت:** ایمن‌سازی شده بر پایه JWT.
+- **مدیریت وضعیت (State Management):** استفاده از React Context API (شامل Auth, Theme, Settings, Toast).
 
-## Quick Start
+## شروع سریع
 
-### Installation
+### نصب
 
-1. Install dependencies:
+۱. نصب وابستگی‌ها:
    ```bash
    npm install
    ```
-2. Start the development server:
+۲. اجرای سرور توسعه:
    ```bash
    npm run dev
    ```
-   The application will be available at `http://localhost:3000`.
+   برنامه در آدرس `http://localhost:3000` در دسترس خواهد بود.
 
-### Production Build
+### بیلد پروداکشن
 
-To build the application for production:
+برای ساخت نسخه نهایی و پروداکشن برنامه:
 ```bash
 npm run build
 ```
-Start the production server:
+اجرای سرور پروداکشن:
 ```bash
 npm start
 ```
 
-## Available Roles for Testing
-- **Admin**: `admin` / `password`
-- **Requester**: `reza` / `password`
-- **Supervisor**: `hasan` / `password`
-- **Storekeeper**: `maryam` / `password`
-- **Purchaser**: `sina` / `password`
+## نقش‌های پیش‌فرض برای تست
+- **مدیر سیستم (Admin)**: نام کاربری `admin` / رمز عبور `password`
+- **درخواست‌کننده (Requester)**: نام کاربری `reza` / رمز عبور `password`
+- **سرپرست (Supervisor)**: نام کاربری `hasan` / رمز عبور `password`
+- **انباردار (Storekeeper)**: نام کاربری `maryam` / رمز عبور `password`
+- **مسئول خرید (Purchaser)**: نام کاربری `sina` / رمز عبور `password`

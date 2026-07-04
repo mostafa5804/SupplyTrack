@@ -1,39 +1,39 @@
-# SupplyTrack: Usage Tutorial
+# راهنمای استفاده از SupplyTrack
 
-Welcome to the SupplyTrack tutorial! This guide walks you through the core workflow of requesting, approving, sourcing, and delivering items.
+به راهنمای استفاده از SupplyTrack خوش آمدید! این راهنما شما را با گردش‌کار اصلی سیستم شامل ثبت درخواست، تأیید، تأمین و تحویل کالا آشنا می‌کند.
 
-## 1. Creating a Request (Requester)
-1. Log in using the username `reza` (password: `password`).
-2. Navigate to **"درخواست‌های من"** (My Requests).
-3. Click the **"ثبت درخواست جدید"** (New Request) button.
-4. Fill in the item name, required quantity, and unit. You can add multiple items to a single request.
-5. Submit the form. The request status will now be **"در انتظار تأیید سرپرست"** (Pending Supervisor Approval).
+## ۱. ثبت درخواست (درخواست‌کننده)
+۱. با نام کاربری `reza` (رمز عبور: `password`) وارد سیستم شوید.
+۲. به بخش **"درخواست‌های من"** بروید.
+۳. روی دکمه **"ثبت درخواست جدید"** کلیک کنید.
+۴. نام کالا، مقدار مورد نیاز و واحد آن را وارد کنید. شما می‌توانید در یک درخواست چندین کالا را اضافه کنید.
+۵. فرم را ثبت کنید. اکنون وضعیت درخواست به **"در انتظار تأیید سرپرست"** تغییر می‌کند.
 
-## 2. Supervisor Approval (Supervisor)
-1. Log out and log in as `hasan` (password: `password`).
-2. Navigate to **"تأییدات"** (Approvals).
-3. You will see the request created by Reza.
-4. You can edit the approved quantities if necessary. 
-5. Click **"تأیید درخواست"** (Approve Request). The status changes to **"بررسی انبار"** (Warehouse Check).
+## ۲. تأیید سرپرست (سرپرست)
+۱. از سیستم خارج شده و با نام کاربری `hasan` (رمز عبور: `password`) وارد شوید.
+۲. به بخش **"تأییدات"** بروید.
+۳. در اینجا درخواستی که توسط رضا ثبت شده را مشاهده خواهید کرد.
+۴. در صورت نیاز می‌توانید مقادیر تأیید شده را ویرایش کنید.
+۵. روی **"تأیید درخواست"** کلیک کنید. وضعیت به **"بررسی انبار"** تغییر می‌یابد.
 
-## 3. Warehouse Check (Storekeeper)
-1. Log out and log in as `maryam` (password: `password`).
-2. Navigate to **"انبار"** (Warehouse).
-3. Find the approved request. Here you must define how much of the requested quantity will be supplied from the current warehouse stock (**تامین از انبار**) and how much needs to be purchased (**نیاز به خرید**).
-4. If there is a shortage, the system automatically sets the request status to **"در انتظار خرید"** (Pending Purchase).
-5. **Inventory Tab:** While in the Warehouse, switch to the **"موجودی کالا"** (Inventory) tab to view real-time inventory. If any item falls below its minimum threshold, you will receive a toast notification alert.
+## ۳. بررسی انبار (انباردار)
+۱. از سیستم خارج شده و با نام کاربری `maryam` (رمز عبور: `password`) وارد شوید.
+۲. به بخش **"انبار"** بروید.
+۳. درخواست تأیید شده را پیدا کنید. در اینجا باید مشخص کنید که چه مقدار از کالای درخواستی از موجودی فعلی انبار تأمین می‌شود (**تأمین از انبار**) و چه مقدار نیاز به خرید دارد (**نیاز به خرید**).
+۴. در صورت وجود کسری، سیستم به‌طور خودکار وضعیت درخواست را به **"در انتظار خرید"** تغییر می‌دهد.
+۵. **تب موجودی کالا:** در بخش انبار، با رفتن به تب **"موجودی کالا"** می‌توانید موجودی در لحظه را مشاهده کنید. اگر موجودی کالایی از حداقل مجاز کمتر شود، یک اعلان (Toast) دریافت خواهید کرد.
 
-## 4. Purchasing (Purchaser)
-1. Log out and log in as `sina` (password: `password`).
-2. Navigate to **"لیست خرید"** (Purchase List).
-3. The system consolidates all shortages. You can input the exact amount you have purchased for each requested item.
-4. Once you click **"ثبت مقادیر خریداری شده"** (Log Purchased Quantities), the system moves the request to the final delivery stage.
+## ۴. خرید (مسئول خرید)
+۱. از سیستم خارج شده و با نام کاربری `sina` (رمز عبور: `password`) وارد شوید.
+۲. به بخش **"لیست خرید"** بروید.
+۳. سیستم تمامی کسری‌ها را تجمیع کرده است. شما می‌توانید مقدار دقیق خریداری شده برای هر کالای درخواستی را وارد کنید.
+۴. پس از کلیک روی **"ثبت مقادیر خریداری شده"**، سیستم درخواست را به مرحله نهایی تحویل منتقل می‌کند.
 
-## 5. Final Delivery (Storekeeper)
-1. Log back in as `maryam` (password: `password`) and go to the Warehouse.
-2. The request is now in **"آماده تحویل"** (Ready for Delivery) state.
-3. You will see both the items supplied from the warehouse and the items purchased by the procurement team.
-4. Enter the final delivered quantity and click **"ثبت مقدار تحویلی"** (Log Delivered Quantity). 
-5. If the entire request is fulfilled, the status turns green indicating **"تحویل شده"** (Completed).
+## ۵. تحویل نهایی (انباردار)
+۱. مجدداً با حساب `maryam` (رمز عبور: `password`) وارد شده و به بخش انبار بروید.
+۲. اکنون درخواست در وضعیت **"آماده تحویل"** قرار دارد.
+۳. شما می‌توانید هم اقلام تأمین شده از انبار و هم اقلام خریداری شده توسط تیم تدارکات را مشاهده کنید.
+۴. مقدار نهایی تحویل داده شده را وارد کرده و روی **"ثبت مقدار تحویلی"** کلیک کنید.
+۵. اگر تمام اقلام درخواست به طور کامل تحویل داده شود، وضعیت با رنگ سبز به **"تحویل شده"** (پایان‌یافته) تغییر می‌کند.
 
-Congratulations! You have successfully traced an item request through the complete supply chain lifecycle.
+تبریک می‌گوییم! شما با موفقیت یک درخواست کالا را در چرخه کامل تأمین سیستم پیگیری و تکمیل کردید.

@@ -40,13 +40,14 @@ export function BottomNav() {
       <div className="flex items-center justify-between relative">
         
         {/* Right side items */}
-        <div className="flex flex-1 justify-around items-center">
+        <div className="flex-1 flex flex-wrap justify-center items-center gap-1">
           {rightLinks.map((link, idx) => (
             <NavLink 
               key={idx}
               to={link.to} 
               className={({isActive}) => cn(
-                "flex flex-col items-center justify-center p-1 gap-1 text-xs transition-colors w-16",
+                "flex flex-col items-center justify-center p-1.5 gap-1 text-xs transition-colors",
+                rightLinks.length > 2 ? "w-[45%]" : "w-16",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -57,7 +58,7 @@ export function BottomNav() {
         </div>
 
         {/* Center + button */}
-        <div className="flex-shrink-0 mx-2 -mt-6">
+        <div className="flex-shrink-0 mx-2 -mt-6 self-start">
           <button 
             onClick={() => navigate('/requests', { state: { openNew: true } })}
             className="w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-4 border-background transition-transform active:scale-95"
@@ -67,13 +68,14 @@ export function BottomNav() {
         </div>
 
         {/* Left side items */}
-        <div className="flex flex-1 justify-around items-center">
+        <div className="flex-1 flex flex-wrap justify-center items-center gap-1">
           {leftLinks.map((link, idx) => (
             <NavLink 
               key={idx}
               to={link.to} 
               className={({isActive}) => cn(
-                "flex flex-col items-center justify-center p-1 gap-1 text-xs transition-colors w-16",
+                "flex flex-col items-center justify-center p-1.5 gap-1 text-xs transition-colors",
+                leftLinks.length > 2 ? "w-[45%]" : "w-16",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >

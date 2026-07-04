@@ -185,7 +185,7 @@ export function Requests() {
                       <td className="px-6 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-3">
     <button onClick={() => openDetails(r)} className="text-primary hover:underline font-bold text-[11px] sm:text-xs">مشاهده</button>
-    {r.status === 'pending_supervisor' && (r.requesterId === user?.id || user?.role === 'admin') && (
+    {((r.status === 'pending_supervisor' && r.requesterId === user?.id) || user?.role === 'admin') && (
       <>
         <button onClick={() => openEdit(r)} className="text-muted-foreground hover:text-primary transition-colors" title="ویرایش"><Edit2 size={16} /></button>
         <button onClick={() => handleDelete(r)} className="text-muted-foreground hover:text-destructive transition-colors" title="حذف"><Trash2 size={16} /></button>
@@ -231,7 +231,7 @@ export function Requests() {
                   
                   <div className="flex gap-2 pt-2 border-t border-border/50">
     <button onClick={() => openDetails(r)} className="flex-1 bg-secondary hover:bg-secondary/80 text-secondary-foreground py-2 rounded-lg text-xs font-bold transition-colors">مشاهده</button>
-    {r.status === 'pending_supervisor' && (r.requesterId === user?.id || user?.role === 'admin') && (
+    {((r.status === 'pending_supervisor' && r.requesterId === user?.id) || user?.role === 'admin') && (
       <>
         <button onClick={() => openEdit(r)} className="flex-1 border border-border hover:bg-muted text-muted-foreground flex items-center justify-center gap-1 py-2 rounded-lg text-[10px] sm:text-xs font-bold transition-colors"><Edit2 size={14} /> ویرایش</button>
         <button onClick={() => handleDelete(r)} className="flex-1 border border-destructive/20 hover:bg-destructive/10 text-destructive flex items-center justify-center gap-1 py-2 rounded-lg text-[10px] sm:text-xs font-bold transition-colors"><Trash2 size={14} /> حذف</button>

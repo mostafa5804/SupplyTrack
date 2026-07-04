@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../store/AuthContext';
+import { useSettings } from '../store/SettingsContext';
 import { api } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -16,6 +17,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export function Login() {
   const [error, setError] = useState('');
   const { login } = useAuth();
+  const { settings } = useSettings();
   const navigate = useNavigate();
 
   const {
@@ -26,7 +28,7 @@ export function Login() {
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: 'admin',
-      password: 'password',
+      password: 'admin',
     }
   });
 
@@ -44,8 +46,14 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-md p-8 bg-card border border-border rounded-2xl shadow-xl">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-4">🏭</div>
-          <h1 className="text-2xl font-bold text-foreground">ورود به سامانه</h1>
+          <div className="flex justify-center mb-4">
+            {settings.logoUrl ? (
+              <img src={settings.logoUrl} alt="Logo" className="w-16 h-16 object-contain rounded-lg bg-white" />
+            ) : (
+              <div className="text-5xl">🏭</div>
+            )}
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">ورود به {settings.projectName}</h1>
           <p className="text-muted-foreground mt-2 text-sm">جهت ورود نام کاربری و رمز عبور خود را وارد کنید.</p>
         </div>
         
@@ -78,17 +86,6 @@ export function Login() {
             {isSubmitting ? 'در حال ورود...' : 'ورود'}
           </button>
         </form>
-
-        <div className="mt-8 pt-6 border-t border-border text-xs text-muted-foreground">
-          <p className="font-semibold mb-2">کاربران پیش‌فرض جهت تست (رمز عبور برای همه: password):</p>
-          <ul className="space-y-1 list-disc list-inside">
-            <li>reza (درخواست‌کننده)</li>
-            <li>hasan (سرپرست)</li>
-            <li>maryam (انباردار)</li>
-            <li>sina (مسئول خرید)</li>
-            <li>negar (ادمین)</li>
-          </ul>
-        </div>
       </div>
     </div>
   );

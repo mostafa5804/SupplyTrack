@@ -11,45 +11,15 @@ const JWT_SECRET = process.env.JWT_SECRET || "my_super_secret_jwt_key_123";
 
 // --- IN MEMORY DATA STORE ---
 let USERS = [
-  { id: 1, name: 'رضا محمدی', username: 'reza', passwordHash: bcrypt.hashSync('password', 10), role: 'requester', department: 'تعمیر و نگهداری' },
-  { id: 2, name: 'علی کریمی', username: 'ali', passwordHash: bcrypt.hashSync('password', 10), role: 'requester', department: 'پیمانکار الف' },
-  { id: 3, name: 'حسن احمدی', username: 'hasan', passwordHash: bcrypt.hashSync('password', 10), role: 'supervisor', department: 'کارگاه اصلی' },
-  { id: 4, name: 'مریم رستمی', username: 'maryam', passwordHash: bcrypt.hashSync('password', 10), role: 'storekeeper', department: 'انبار مرکزی' },
-  { id: 5, name: 'سینا موحدی', username: 'sina', passwordHash: bcrypt.hashSync('password', 10), role: 'purchaser', department: 'خرید و تدارکات' },
-  { id: 6, name: 'نگار صادقی', username: 'admin', passwordHash: bcrypt.hashSync('password', 10), role: 'admin', department: 'فناوری اطلاعات' }
+  { id: 1, name: 'مدیر سیستم', username: 'admin', passwordHash: bcrypt.hashSync('admin', 10), role: 'admin', department: 'فناوری اطلاعات' }
 ];
 
-let userCounter = 7;
+let userCounter = 2;
 
-let REQUESTS: any[] = [
-  {
-    id: 1001, requesterId: 1, date: '1403/08/12', status: 'completed',
-    items: [
-      { id: 1, itemName: 'کابل برق ۲.۵ میلی', unit: 'متر', reqQty: 200, supQty: 200, whQty: 200, buyQty: 0 },
-      { id: 2, itemName: 'پیچ متری M10×40', unit: 'عدد', reqQty: 100, supQty: 100, whQty: 100, buyQty: 0 }
-    ],
-    logs: [
-      { id: 1, user: 'رضا محمدی', date: '1403/08/12 09:15', action: 'ثبت درخواست', icon: '📝' },
-      { id: 2, user: 'حسن احمدی', date: '1403/08/12 10:30', action: 'تأیید سرپرست', icon: '✅' },
-      { id: 3, user: 'مریم رستمی', date: '1403/08/12 14:00', action: 'بررسی انبار — تمام اقلام موجود بود', icon: '📦' },
-      { id: 4, user: 'مریم رستمی', date: '1403/08/13 08:00', action: 'تحویل نهایی به درخواست‌کننده', icon: '🎯' }
-    ]
-  },
-  {
-    id: 1002, requesterId: 2, date: '1403/08/14', status: 'pending_supervisor',
-    items: [
-      { id: 3, itemName: 'چراغ مهتابی ۳۶ وات', unit: 'عدد', reqQty: 20, supQty: 0, whQty: 0, buyQty: 0 },
-      { id: 4, itemName: 'کلید مینیاتوری ۱۶A', unit: 'عدد', reqQty: 5, supQty: 0, whQty: 0, buyQty: 0 }
-    ],
-    logs: [
-      { id: 5, user: 'علی کریمی', date: '1403/08/14 11:00', action: 'ثبت درخواست', icon: '📝' }
-    ]
-  }
-];
-
-let requestCounter = 1003;
-let logCounter = 6;
-let reqItemCounter = 5;
+let REQUESTS: any[] = [];
+let requestCounter = 1000;
+let logCounter = 1;
+let reqItemCounter = 1;
 let SETTINGS = {
   projectName: 'سامانه درخواست کالا',
   companyName: 'شرکت فولاد صنعت',
@@ -172,7 +142,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     if (index === -1) return res.status(404).json({ message: 'Not found' });
     
     const request = REQUESTS[index];
-    if (request.status !== 'pending_supervisor') {
+    if (req.user.role !== 'admin' && request.status !== 'pending_supervisor') {
       return res.status(400).json({ message: 'فقط درخواست‌های در انتظار تایید سرپرست قابل حذف هستند' });
     }
     if (req.user.role !== 'admin' && request.requesterId !== req.user.id) {

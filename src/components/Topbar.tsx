@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../store/AuthContext';
 import { useTheme } from '../store/ThemeContext';
-import { Search, Bell, Moon, Sun, Menu, ArrowRight, Calendar } from 'lucide-react';
+import { Search, Bell, Moon, Sun, Menu, ArrowRight, Calendar, LogOut } from 'lucide-react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { farsiDateLong } from '../lib/utils';
 
@@ -32,7 +32,7 @@ const roleLabels: Record<string, string> = {
 };
 
 export function Topbar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
@@ -82,8 +82,16 @@ export function Topbar() {
           {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
         </button>
         
-        <button className="p-2 rounded-lg bg-secondary text-muted-foreground hover:bg-border transition-colors">
+        <button className="hidden sm:block p-2 rounded-lg bg-secondary text-muted-foreground hover:bg-border transition-colors">
           <Bell size={20} />
+        </button>
+
+        <button 
+          onClick={logout}
+          className="lg:hidden p-2 rounded-lg bg-secondary text-destructive hover:bg-destructive/10 transition-colors"
+          title="خروج"
+        >
+          <LogOut size={20} />
         </button>
       </div>
     </header>
