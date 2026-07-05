@@ -71,8 +71,8 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           </>
         )}
         <div className="text-[10px] font-bold text-muted-foreground mt-4 mb-2 mr-2">راهنما</div>
-        <NavLink onClick={onClose} to="/help" className={({isActive}) => cn("flex items-center gap-3 p-2.5 rounded-lg transition-all text-sm font-medium", isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground")}>
-          <BookOpen size={20} /> راهنمای استفاده
+        <NavLink onClick={onClose} to="/about" className={({isActive}) => cn("flex items-center gap-3 p-2.5 rounded-lg transition-all text-sm font-medium", isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground")}>
+          <BookOpen size={20} /> درباره برنامه
         </NavLink>
       </nav>
 
