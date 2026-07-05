@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api, farsiNum, STATUS_MAP } from '../lib/utils';
+import { QtyInput } from '../components/QtyInput';
 import { Request } from '../types';
 import { Printer, PackageCheck, Package, ShoppingCart, Search, AlertTriangle } from 'lucide-react';
 import { RequestDetailsModal } from '../components/RequestDetailsModal';
@@ -169,13 +170,11 @@ export function Warehouse() {
                                 <td className="py-3 px-6 text-center">
                                   <div className="flex items-center justify-center gap-2">
                                     <Package className="text-primary/70" size={16} />
-                                    <input 
-                                      type="number" 
-                                      min="0" 
+                                    <QtyInput 
+                                      min={0} 
                                       max={it.supQty}
                                       value={it.whQty}
-                                      onChange={(e) => handleQtyChange(r.id, idx, e.target.value, 'whQty')}
-                                      className="w-20 bg-background border border-border rounded-md px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-primary text-center font-bold"
+                                      onChange={(val) => handleQtyChange(r.id, idx, val, 'whQty')}
                                     />
                                   </div>
                                 </td>
@@ -210,13 +209,11 @@ export function Warehouse() {
                                   {farsiNum(totalAvailable)} <span className="font-normal text-[10px] text-muted-foreground">{it.unit}</span>
                                 </td>
                                 <td className="py-3 px-6 text-center">
-                                  <input 
-                                    type="number" 
-                                    min="0" 
+                                  <QtyInput 
+                                    min={0} 
                                     max={totalAvailable}
                                     value={it.deliveredQty}
-                                    onChange={(e) => handleQtyChange(r.id, idx, e.target.value, 'deliveredQty')}
-                                    className="w-20 bg-background border border-border rounded-md px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-500 text-center font-bold"
+                                    onChange={(val) => handleQtyChange(r.id, idx, val, 'deliveredQty')}
                                   />
                                 </td>
                               </>
@@ -245,13 +242,11 @@ export function Warehouse() {
                           <div className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-primary">تامین انبار:</span>
-                              <input 
-                                type="number" 
-                                min="0" 
+                              <QtyInput 
+                                min={0} 
                                 max={it.supQty}
                                 value={it.whQty}
-                                onChange={(e) => handleQtyChange(r.id, idx, e.target.value, 'whQty')}
-                                className="w-16 bg-background border border-border rounded-md px-1 py-1.5 text-xs outline-none focus:ring-2 focus:ring-primary text-center font-bold"
+                                onChange={(val) => handleQtyChange(r.id, idx, val, 'whQty')}
                               />
                             </div>
                             <div className="flex flex-col items-end">
@@ -263,13 +258,11 @@ export function Warehouse() {
                           <div className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-teal-600">مقدار تحویل:</span>
-                              <input 
-                                type="number" 
-                                min="0" 
+                              <QtyInput 
+                                min={0} 
                                 max={totalAvailable}
                                 value={it.deliveredQty}
-                                onChange={(e) => handleQtyChange(r.id, idx, e.target.value, 'deliveredQty')}
-                                className="w-16 bg-background border border-border rounded-md px-1 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-500 text-center font-bold"
+                                onChange={(val) => handleQtyChange(r.id, idx, val, 'deliveredQty')}
                               />
                             </div>
                             <div className="flex flex-col items-end text-xs">

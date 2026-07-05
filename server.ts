@@ -1,5 +1,5 @@
-const farsiDate = () => new Intl.DateTimeFormat("fa-IR", { calendar: "persian", numberingSystem: "arabext" }).format(new Date());
-const farsiTime = () => new Intl.DateTimeFormat("fa-IR", { timeStyle: "short", numberingSystem: "arabext" }).format(new Date());
+const farsiDate = () => new Intl.DateTimeFormat("fa-IR", { calendar: "persian", numberingSystem: "arabext", timeZone: "Asia/Tehran" }).format(new Date());
+const farsiTime = () => new Intl.DateTimeFormat("fa-IR", { timeStyle: "short", numberingSystem: "arabext", timeZone: "Asia/Tehran" }).format(new Date());
 
 import express from "express";
 import path from "path";
@@ -342,49 +342,53 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   
-  app.put('/api/requests/:id/deliver', authenticateToken, (req: any, res) => {
-    if (req.user.role !== 'storekeeper' && req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
-    const id = parseInt(req.params.id);
-    const { items } = req.body;
-    
-    const request = REQUESTS.find(r => r.id === id);
-    if (!request) return res.status(404).json({ message: 'Not found' });
-    
-    // items sent from client have the new deliveredQty
-    let allDelivered = true;
-    request.items.forEach((it, idx) => {
-      const sentItem = items[idx];
-      const dQty = parseInt(sentItem?.deliveredQty) || 0;
+    app.put('/api/requests/:id/deliver', authenticateToken, (req: any, res) => {
+    try {
+      if (req.user.role !== 'storekeeper' && req.user.role !== 'admin' && req.user.role !== 'supervisor' && req.user.role !== 'warehouse') return res.sendStatus(403);
+      const id = parseInt(req.params.id);
+      const { items } = req.body;
       
-      it.totalDelivered = (it.totalDelivered || 0) + dQty;
-      it.whQty = (it.whQty || 0) - dQty;
+      const request = REQUESTS.find(r => r.id === id);
+      if (!request) return res.status(404).json({ message: 'Not found' });
       
-      // Prevent negative whQty
-      if (it.whQty < 0) it.whQty = 0;
+      if (!items || !Array.isArray(items)) return res.status(400).json({ message: 'Items array missing' });
+
+      let allDelivered = true;
+      request.items.forEach((it, idx) => {
+        const sentItem = items[idx];
+        const dQty = parseInt(sentItem?.deliveredQty) || 0;
+        
+        it.totalDelivered = (it.totalDelivered || 0) + dQty;
+        it.whQty = (it.whQty || 0) - dQty;
+        
+        if (it.whQty < 0) it.whQty = 0;
+        
+        delete it.deliveredQty;
+
+        if ((it.totalDelivered || 0) < (it.supQty || 0)) {
+          allDelivered = false;
+        }
+      });
       
-      // We don't save deliveredQty, it's just a transient field for the current delivery action
-      delete it.deliveredQty;
+      request.status = allDelivered ? 'completed' : 'partial_delivery';
 
-      if ((it.totalDelivered || 0) < it.supQty) {
-        allDelivered = false;
-      }
-    });
-    
-    request.status = allDelivered ? 'completed' : 'partial_delivery';
+      request.logs.push({
+        id: logCounter++,
+        user: req.user.name || 'System',
+        date: farsiDate() + ' ' + farsiTime(),
+        action: allDelivered ? 'تحویل کامل به درخواست‌کننده' : 'تحویل ناقص به درخواست‌کننده',
+        icon: '🎁'
+      });
 
-    request.logs.push({
-      id: logCounter++,
-      user: req.user.name,
-      date: farsiDate() + ' ' + farsiTime(),
-      action: allDelivered ? 'تحویل کامل به درخواست‌کننده' : 'تحویل ناقص به درخواست‌کننده',
-      icon: '🎁'
-    });
-
-    saveDB();
-    res.json(request);
+      saveDB();
+      res.json(request);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
+    }
   });
 
-  app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
+app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
     if (req.user.role !== 'purchaser' && req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const { items } = req.body;

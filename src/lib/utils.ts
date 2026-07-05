@@ -10,7 +10,7 @@ export const farsiNum = (str: string | number) => {
   return String(str).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]);
 };
 
-export const farsiDateLong = () => new Intl.DateTimeFormat("fa-IR", { calendar: "persian", numberingSystem: "arabext", dateStyle: "long" }).format(new Date());
+export const farsiDateLong = () => new Intl.DateTimeFormat("fa-IR", { calendar: "persian", numberingSystem: "arabext", dateStyle: "long", timeZone: "Asia/Tehran" }).format(new Date());
 
 export const api = axios.create({
   baseURL: '/api',

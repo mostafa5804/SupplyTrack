@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../store/AuthContext';
 import { useTheme } from '../store/ThemeContext';
-import { Search, Bell, Moon, Sun, Menu, ArrowRight, Calendar, LogOut } from 'lucide-react';
+import { Search, Bell, Moon, Sun, Menu, ArrowRight, Calendar, LogOut, BookOpen } from 'lucide-react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { farsiDateLong } from '../lib/utils';
 
@@ -13,6 +13,7 @@ const routeTitles: Record<string, string> = {
   '/purchasing': 'لیست خرید',
   '/users': 'مدیریت کاربران',
   '/settings': 'تنظیمات سامانه',
+  '/help': 'راهنمای استفاده',
 };
 
 const roleColors: Record<string, string> = {
@@ -75,6 +76,14 @@ export function Topbar() {
           <Search size={16} className="text-muted-foreground absolute right-3 top-2.5" />
         </div>
         
+
+        <button 
+          onClick={() => navigate('/help')}
+          className="p-2 rounded-lg bg-secondary text-primary hover:bg-border transition-colors"
+          title="راهنمای استفاده"
+        >
+          <BookOpen size={20} />
+        </button>
         <button 
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="p-2 rounded-lg bg-secondary text-muted-foreground hover:bg-border transition-colors"

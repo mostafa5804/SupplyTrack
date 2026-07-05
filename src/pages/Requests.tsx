@@ -3,6 +3,7 @@ import { api, STATUS_MAP, farsiNum } from '../lib/utils';
 import { Request } from '../types';
 import { cn } from '../lib/utils';
 import { Plus, X, Trash2, Edit2, Search, ArrowUpDown } from 'lucide-react';
+import { QtyInput } from '../components/QtyInput';
 import { useAuth } from '../store/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RequestDetailsModal } from '../components/RequestDetailsModal';

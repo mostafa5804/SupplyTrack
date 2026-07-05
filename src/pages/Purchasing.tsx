@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api, farsiNum, STATUS_MAP } from '../lib/utils';
+import { QtyInput } from '../components/QtyInput';
 import { Request } from '../types';
 import { Printer } from 'lucide-react';
 
@@ -96,13 +97,11 @@ export function Purchasing() {
                           <td className="py-3 px-6 text-center font-bold">{farsiNum(it.buyQty)} <span className="font-normal text-muted-foreground text-[10px]">{it.unit}</span></td>
                           <td className="py-3 px-6 text-center font-bold text-muted-foreground">{farsiNum(it.purchasedQty || 0)} <span className="font-normal text-[10px]">{it.unit}</span></td>
                           <td className="py-3 px-6 text-center">
-                            <input 
-                              type="number" 
-                              min="0" 
+                            <QtyInput 
+                              min={0} 
                               max={it.buyQty}
                               value={it.purchasedQty}
-                              onChange={(e) => handleQtyChange(r.id, idx, e.target.value)}
-                              className="w-20 bg-background border border-border rounded-md px-2 py-1 text-xs outline-none focus:ring-2 focus:ring-primary text-center"
+                              onChange={(val) => handleQtyChange(r.id, idx, val)}
                             />
                           </td>
                         </tr>
@@ -125,13 +124,11 @@ export function Purchasing() {
                         <span className="text-muted-foreground">خریداری شده: <strong className="text-foreground">{farsiNum(it.purchasedQty || 0)}</strong></span>
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground">جدید:</span>
-                          <input 
-                            type="number" 
-                            min="0" 
+                          <QtyInput 
+                            min={0} 
                             max={it.buyQty}
                             value={it.purchasedQty}
-                            onChange={(e) => handleQtyChange(r.id, idx, e.target.value)}
-                            className="w-16 bg-background border border-border rounded-md px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary text-center"
+                            onChange={(val) => handleQtyChange(r.id, idx, val)}
                           />
                         </div>
                       </div>

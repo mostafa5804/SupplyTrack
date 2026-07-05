@@ -20,7 +20,7 @@ export function Layout() {
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden print:overflow-visible print:h-auto print:block">
         <Topbar />
         
-        <main className="p-4 lg:p-6 overflow-y-auto flex-1 flex flex-col w-full pb-24 lg:pb-6 print:overflow-visible print:p-0 print:block">
+        <main className="p-4 lg:p-6 overflow-y-auto flex-1 flex flex-col w-full pb-40 lg:pb-6 print:overflow-visible print:p-0 print:block">
           <Outlet />
         </main>
       </div>

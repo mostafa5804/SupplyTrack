@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api, farsiNum } from '../lib/utils';
+import { QtyInput } from '../components/QtyInput';
 import { Request } from '../types';
 import { RequestDetailsModal } from '../components/RequestDetailsModal';
 import { Printer } from 'lucide-react';
@@ -141,13 +142,11 @@ export function Supervisor() {
                             </td>
                             <td className="py-3 px-6 text-center font-bold whitespace-nowrap">{farsiNum(it.reqQty)} <span className="text-muted-foreground text-[10px] font-normal">{it.unit}</span></td>
                             <td className="py-3 px-6 text-center whitespace-nowrap">
-                              <input 
-                                type="number" 
-                                min="0" 
-                                 
+                              <QtyInput 
+                                min={0} 
                                 value={it.supQty}
-                                onChange={(e) => handleQtyChange(r.id, idx, e.target.value, it.reqQty)}
-                                className="w-20 bg-background border border-border rounded-md px-2 py-1 text-xs outline-none focus:ring-2 focus:ring-primary text-center"
+                                onChange={(val) => handleQtyChange(r.id, idx, val, it.reqQty)}
+                                className="w-auto inline-flex"
                               />
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -195,13 +194,10 @@ export function Supervisor() {
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-bold">مقدار تأییدی:</span>
                           <div className="flex items-center gap-2">
-                            <input 
-                              type="number" 
-                              min="0" 
-                               
+                            <QtyInput 
+                              min={0} 
                               value={it.supQty}
-                              onChange={(e) => handleQtyChange(r.id, idx, e.target.value, it.reqQty)}
-                              className="w-16 bg-background border border-border rounded-md px-1 py-1 text-xs outline-none focus:ring-1 focus:ring-primary text-center"
+                              onChange={(val) => handleQtyChange(r.id, idx, val, it.reqQty)}
                             />
                             <div className="flex gap-1">
                               <button onClick={() => handleItemAction(r.id, idx, 'approve', it.reqQty)} className={`p-1 rounded-md border ${it.supQty > 0 ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-border hover:bg-secondary text-muted-foreground'}`}>✅</button>

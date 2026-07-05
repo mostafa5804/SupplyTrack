@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../store/AuthContext';
 import { useSettings } from '../store/SettingsContext';
-import { LayoutDashboard, FileText, CheckSquare, Package, ShoppingCart, LogOut, Users, X, Settings } from 'lucide-react';
+import { LayoutDashboard, FileText, CheckSquare, Package, ShoppingCart, LogOut, Users, X, Settings, BookOpen } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export function Sidebar({ onClose }: { onClose?: () => void }) {
@@ -70,6 +70,10 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             </NavLink>
           </>
         )}
+        <div className="text-[10px] font-bold text-muted-foreground mt-4 mb-2 mr-2">راهنما</div>
+        <NavLink onClick={onClose} to="/help" className={({isActive}) => cn("flex items-center gap-3 p-2.5 rounded-lg transition-all text-sm font-medium", isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground")}>
+          <BookOpen size={20} /> راهنمای استفاده
+        </NavLink>
       </nav>
 
       <div className="p-4 bg-muted border-t border-border mt-auto">
