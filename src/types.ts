@@ -18,6 +18,7 @@ export interface RequestItem {
   buyQty: number;
   purchasedQty?: number;
   deliveredQty?: number;
+  totalDelivered?: number;
   description?: string;
   supComment?: string;
 }

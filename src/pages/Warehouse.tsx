@@ -9,10 +9,12 @@ export function Warehouse() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [selectedReq, setSelectedReq] = useState<Request | null>(null);
+  const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
+  const { showToast } = useToast();
 
   const fetchData = () => {
     api.get('/requests').then(res => {
-      const data = res.data.filter((r: Request) => ['approved_supervisor', 'warehouse_check', 'pending_delivery', 'partial_delivery'].includes(r.status));
+      const data = res.data.filter((r: Request) => ['approved_supervisor', 'warehouse_check', 'pending_delivery', 'partial_delivery', 'completed'].includes(r.status));
       data.forEach((r: Request) => r.items.forEach(it => {
         if (it.whQty === 0 && it.supQty > 0 && !it.hasOwnProperty('_whInitialized')) {
           it.whQty = it.supQty;
@@ -65,21 +67,34 @@ export function Warehouse() {
     try {
       await api.put(`/requests/${req.id}/warehouse`, { items: req.items });
       fetchData();
-      alert('بررسی انبار با موفقیت ثبت شد.');
-    } catch (e) {
-      alert('خطا در ثبت');
+      showToast('بررسی انبار با موفقیت ثبت شد.', 'success');
+    } catch (e: any) {
+      showToast('خطا در ثبت: ' + (e.response?.data?.message || e.message), 'error');
     }
   };
 
   const handleDeliver = async (req: Request) => {
     try {
-      await api.put(`/requests/${req.id}/deliver`, { items: req.items });
+      console.log('--- START handleDeliver ---');
+      console.log('Sending request items to API for delivery:', req.items);
+      const res = await api.put(`/requests/${req.id}/deliver`, { items: req.items });
+      console.log('API Response:', res.data);
       fetchData();
-      alert('تحویل با موفقیت ثبت شد.');
-    } catch (e) {
-      alert('خطا در ثبت');
+      showToast('تحویل با موفقیت ثبت شد.', 'success');
+      console.log('--- END handleDeliver ---');
+    } catch (e: any) {
+      console.error('Delivery Error:', e);
+      const msg = e.response?.data?.message || e.message || 'خطای نامشخص';
+      console.error('Error Details:', msg);
+      showToast(`خطا در ثبت: ${msg}`, 'error');
     }
   };
+
+  
+  const filteredRequests = requests.filter(r => {
+    if (activeTab === 'pending') return r.status !== 'completed';
+    return r.status === 'completed';
+  });
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 lg:space-y-8 w-full">
