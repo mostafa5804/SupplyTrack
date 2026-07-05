@@ -12,7 +12,9 @@ const JWT_SECRET = process.env.JWT_SECRET || "my_super_secret_jwt_key_123";
 import fs from "fs";
 
 // --- FILE-BASED DATA STORE ---
-const DB_FILE = path.join(process.cwd(), 'db.json');
+const DATA_DIR = path.join(process.cwd(), '.data');
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+const DB_FILE = path.join(DATA_DIR, 'db.json');
 let USERS: any[] = [];
 let userCounter = 2;
 let REQUESTS: any[] = [];
@@ -422,7 +424,9 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  const isProd = process.env.NODE_ENV === "production" || process.argv[1]?.endsWith('server.cjs');
+
+  if (!isProd) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
