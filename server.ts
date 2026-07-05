@@ -188,7 +188,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
 });
 
   app.get('/api/users', authenticateToken, (req, res) => {
-    res.json(USERS.map(u => ({ id: u.id, name: u.name, username: u.username, role: u.role, department: u.department })));
+    res.json(USERS.map(u => ({ id: u.id, name: u.name, username: u.username, role: u.role, department: u.department, mobile: u.mobile || '' })));
   });
 
   app.post('/api/users', authenticateToken, async (req: any, res) => {
