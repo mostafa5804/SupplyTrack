@@ -67,7 +67,7 @@ export function Supervisor() {
         req.items[itemIdx].supQty = '' as any;
       } else {
         const numVal = parseInt(val, 10);
-        req.items[itemIdx].supQty = isNaN(numVal) ? 0 : (numVal > maxQty ? maxQty : numVal);
+        req.items[itemIdx].supQty = isNaN(numVal) ? 0 : numVal;
       }
       setRequests(newReqs);
     }
@@ -144,7 +144,7 @@ export function Supervisor() {
                               <input 
                                 type="number" 
                                 min="0" 
-                                max={farsiNum(it.reqQty)} 
+                                 
                                 value={it.supQty}
                                 onChange={(e) => handleQtyChange(r.id, idx, e.target.value, it.reqQty)}
                                 className="w-20 bg-background border border-border rounded-md px-2 py-1 text-xs outline-none focus:ring-2 focus:ring-primary text-center"
@@ -198,7 +198,7 @@ export function Supervisor() {
                             <input 
                               type="number" 
                               min="0" 
-                              max={farsiNum(it.reqQty)} 
+                               
                               value={it.supQty}
                               onChange={(e) => handleQtyChange(r.id, idx, e.target.value, it.reqQty)}
                               className="w-16 bg-background border border-border rounded-md px-1 py-1 text-xs outline-none focus:ring-1 focus:ring-primary text-center"

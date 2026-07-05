@@ -69,7 +69,7 @@ async function startServer() {
   });
 
   app.put('/api/settings', authenticateToken, (req: any, res) => {
-    if (req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     SETTINGS = { ...SETTINGS, ...req.body };
     res.json(SETTINGS);
   });
@@ -92,7 +92,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   app.post('/api/users', authenticateToken, async (req: any, res) => {
-    if (req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     const { name, username, password, role, department } = req.body;
     if (USERS.find(u => u.username === username)) return res.status(400).json({ message: 'نام کاربری تکراری است' });
     
@@ -109,7 +109,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   app.put('/api/users/:id', authenticateToken, async (req: any, res) => {
-    if (req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const user = USERS.find(u => u.id === id);
     if (!user) return res.sendStatus(404);
@@ -128,7 +128,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   app.delete('/api/users/:id', authenticateToken, (req: any, res) => {
-    if (req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     const id = parseInt(req.params.id);
     if (id === req.user.id) return res.status(400).json({ message: 'نمی‌توانید خودتان را حذف کنید' });
     USERS = USERS.filter(u => u.id !== id);
@@ -142,10 +142,10 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     if (index === -1) return res.status(404).json({ message: 'Not found' });
     
     const request = REQUESTS[index];
-    if (req.user.role !== 'admin' && request.status !== 'pending_supervisor') {
+    if (req.user.role !== 'admin' && req.user.role !== 'supervisor' && request.status !== 'pending_supervisor') {
       return res.status(400).json({ message: 'فقط درخواست‌های در انتظار تایید سرپرست قابل حذف هستند' });
     }
-    if (req.user.role !== 'admin' && request.requesterId !== req.user.id) {
+    if (req.user.role !== 'admin' && req.user.role !== 'supervisor' && request.requesterId !== req.user.id) {
       return res.sendStatus(403);
     }
 
@@ -204,7 +204,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
       return res.status(400).json({ message: 'فقط درخواست‌های در انتظار تأیید قابل ویرایش هستند' });
     }
 
-    if (request.requesterId !== req.user.id && req.user.role !== 'admin') {
+    if (request.requesterId !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'supervisor') {
       return res.sendStatus(403);
     }
 
@@ -231,7 +231,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   app.put('/api/requests/:id/supervisor', authenticateToken, (req: any, res) => {
-    if (req.user.role !== 'supervisor' && req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'supervisor' && req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const { action, items, comment } = req.body;
     
@@ -264,7 +264,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
   });
 
   app.put('/api/requests/:id/warehouse', authenticateToken, (req: any, res) => {
-    if (req.user.role !== 'storekeeper' && req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'storekeeper' && req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     const id = parseInt(req.params.id);
     const { items } = req.body; // updated items with whQty and buyQty
     
@@ -296,8 +296,59 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     res.json(request);
   });
 
+  app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
+    if (req.user.role !== 'purchaser' && req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
+    const id = parseInt(req.params.id);
+    const { items } = req.body;
+    
+    const request = REQUESTS.find(r => r.id === id);
+    if (!request) return res.status(404).json({ message: 'Not found' });
+    
+    request.items = items;
+    let allPurchased = true;
+    let somePurchased = false;
+
+    request.items.forEach((it: any) => {
+      const pQty = parseInt(it.purchasedQty) || 0;
+      if (pQty > 0) {
+        somePurchased = true;
+        it.whQty = (it.whQty || 0) + pQty;
+        it.buyQty -= pQty;
+        it.purchasedQty = 0;
+      }
+      if (it.buyQty > 0) {
+        allPurchased = false;
+      }
+    });
+
+    if (somePurchased) {
+      request.logs.push({
+        id: logCounter++,
+        user: req.user.name,
+        date: farsiDate() + ' ' + farsiTime(),
+        action: 'خرید اقلام و تحویل به انبار',
+        icon: '🛒'
+      });
+    }
+
+    if (allPurchased) {
+      request.status = 'pending_delivery';
+      request.logs.push({
+        id: logCounter++,
+        user: 'سیستم',
+        date: farsiDate() + ' ' + farsiTime(),
+        action: 'تکمیل فرآیند تامین - آماده تحویل',
+        icon: '🎯'
+      });
+    } else {
+      request.status = 'partial_purchase';
+    }
+
+    res.json(request);
+  });
+
   app.put('/api/purchase', authenticateToken, (req: any, res) => {
-    if (req.user.role !== 'purchaser' && req.user.role !== 'admin') return res.sendStatus(403);
+    if (req.user.role !== 'purchaser' && req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
     
     const purchaseReqs = REQUESTS.filter(r => r.status === 'purchase_list');
     purchaseReqs.forEach(r => {

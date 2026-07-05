@@ -60,7 +60,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           </NavLink>
         )}
 
-        {user.role === 'admin' && (
+        {(user.role === 'admin' || user.role === 'supervisor') && (
           <>
             <NavLink onClick={onClose} to="/users" className={({isActive}) => cn("flex items-center gap-3 p-2.5 rounded-lg transition-all text-sm font-medium", isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground")}>
               <Users size={20} /> کاربران

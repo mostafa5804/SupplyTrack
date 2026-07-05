@@ -25,7 +25,7 @@ export function BottomNav() {
   if (user.role === 'purchaser' || user.role === 'admin') {
     links.push({ to: '/purchasing', icon: ShoppingCart, label: 'خرید' });
   }
-  if (user.role === 'admin') {
+  if (user.role === 'admin' || user.role === 'supervisor') {
     links.push({ to: '/users', icon: Users, label: 'کاربران' });
     links.push({ to: '/settings', icon: Settings, label: 'تنظیمات' });
   }

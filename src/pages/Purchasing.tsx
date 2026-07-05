@@ -51,10 +51,11 @@ export function Purchasing() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4 lg:space-y-6 w-full">
+    <>
+    <div className="max-w-6xl mx-auto space-y-4 lg:space-y-6 w-full print:hidden">
       <div className="flex justify-between items-center mb-4 lg:mb-6">
         <h3 className="text-lg lg:text-xl font-bold">لیست خرید (Purchase Order)</h3>
-        <button onClick={() => window.print()} className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2 print:hidden">
+        <button onClick={() => window.print()} className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
           🖨️ چاپ
         </button>
       </div>
@@ -149,5 +150,55 @@ export function Purchasing() {
         ))
       )}
     </div>
+
+    {/* Print Layout */}
+    <div className="hidden print:block w-full text-black bg-white" dir="rtl">
+      {requests.length > 0 ? requests.map(r => (
+        <div key={r.id} className="mb-12 page-break-after">
+          <div className="flex justify-between items-end mb-6 border-b-2 border-black pb-2">
+            <div>
+              <h2 className="text-xl font-bold mb-2">لیست خرید</h2>
+              <p className="text-sm">شماره درخواست: REQ-{farsiNum(r.id)}</p>
+              <p className="text-sm">تاریخ: {r.date}</p>
+            </div>
+          </div>
+          
+          <table className="w-full text-right border-collapse border border-black mb-8">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border border-black py-2 px-3 text-sm">ردیف</th>
+                <th className="border border-black py-2 px-3 text-sm">شرح کالا / خدمات</th>
+                <th className="border border-black py-2 px-3 text-sm text-center">مقدار</th>
+                <th className="border border-black py-2 px-3 text-sm text-center">واحد</th>
+                <th className="border border-black py-2 px-3 text-sm">محل خرید / توضیحات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {r.items.filter(it => it.buyQty > 0).map((it, idx) => (
+                <tr key={idx}>
+                  <td className="border border-black py-2 px-3 text-sm text-center w-12">{farsiNum(idx + 1)}</td>
+                  <td className="border border-black py-2 px-3 text-sm font-bold">{it.itemName}</td>
+                  <td className="border border-black py-2 px-3 text-sm text-center w-24">{farsiNum(it.buyQty)}</td>
+                  <td className="border border-black py-2 px-3 text-sm text-center w-24">{it.unit}</td>
+                  <td className="border border-black py-2 px-3 text-sm w-48"></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="flex justify-between mt-8 text-sm">
+            <div className="text-center">
+              <p className="mb-8">مهر و امضای مسئول خرید</p>
+            </div>
+            <div className="text-center">
+              <p className="mb-8">مهر و امضای مدیر / سرپرست</p>
+            </div>
+          </div>
+        </div>
+      )) : (
+        <p>درخواستی برای خرید وجود ندارد.</p>
+      )}
+    </div>
+    </>
   );
 }
