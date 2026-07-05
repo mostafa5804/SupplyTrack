@@ -193,8 +193,9 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
 
   app.post('/api/users', authenticateToken, async (req: any, res) => {
     if (req.user.role !== 'admin' && req.user.role !== 'supervisor') return res.sendStatus(403);
-    const { name, username, password, role, department } = req.body;
+    const { name, username, password, role, department, mobile } = req.body;
     if (USERS.find(u => u.username === username)) return res.status(400).json({ message: 'نام کاربری تکراری است' });
+    if (mobile && !/^(09|\+989)\d{9}$/.test(mobile.replace(/\s/g, ''))) return res.status(400).json({ message: 'شماره موبایل باید با 09 یا 98+ شروع شده و معتبر باشد.' });
     
     const newUser = {
       id: userCounter++,
@@ -202,7 +203,8 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
       username,
       passwordHash: bcrypt.hashSync(password || '123456', 10),
       role,
-      department
+      department,
+      mobile: mobile || ''
     };
     USERS.push(newUser);
     res.json({ id: newUser.id });
@@ -214,14 +216,15 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     const user = USERS.find(u => u.id === id);
     if (!user) return res.sendStatus(404);
 
-    const { name, username, password, role, department } = req.body;
+    const { name, username, password, role, department, mobile } = req.body;
     if (username !== user.username && USERS.find(u => u.username === username)) return res.status(400).json({ message: 'نام کاربری تکراری است' });
+    if (mobile && !/^(09|\+989)\d{9}$/.test(mobile.replace(/\s/g, ''))) return res.status(400).json({ message: 'شماره موبایل باید با 09 یا 98+ شروع شده و معتبر باشد.' });
 
     user.name = name;
     user.username = username;
     user.role = role;
     user.department = department;
-      user.mobile = mobile;
+    user.mobile = mobile || '';
     if (password) {
       user.passwordHash = bcrypt.hashSync(password, 10);
     }
