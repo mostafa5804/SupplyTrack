@@ -15,7 +15,8 @@ export function Users() {
     username: '',
     password: '',
     role: 'requester',
-    department: ''
+    department: '',
+    mobile: ''
   });
 
   const fetchData = () => {
@@ -76,7 +77,8 @@ export function Users() {
         <h3 className="font-bold text-foreground text-base lg:text-lg">مدیریت کاربران</h3>
         <button 
           onClick={() => {
-            setFormData({ id: 0, name: '', username: '', password: '', role: 'requester', department: '' });
+            setFormData({ id: 0, name: '', username: '', password: '', role: 'requester', department: '',
+    mobile: '' });
             setIsModalOpen(true);
           }}
           className="text-xs font-bold px-3 py-1.5 lg:px-4 lg:py-2 bg-primary text-primary-foreground rounded-lg shadow-sm flex items-center gap-1.5 lg:gap-2"
@@ -94,6 +96,7 @@ export function Users() {
                 <tr className="text-muted-foreground text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
                   <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap">نام و نام خانوادگی</th>
                   <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap hidden sm:table-cell">نام کاربری</th>
+                  <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap">شماره موبایل</th>
                   <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap">نقش</th>
                   <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap hidden md:table-cell">دپارتمان</th>
                   <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 whitespace-nowrap">عملیات</th>
@@ -104,6 +107,7 @@ export function Users() {
                   <tr key={u.id} className="hover:bg-accent/30 transition-colors">
                     <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3.5 font-bold whitespace-nowrap">{u.name}</td>
                     <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3.5 font-mono text-muted-foreground whitespace-nowrap hidden sm:table-cell">{u.username}</td>
+                    <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3.5 font-mono text-muted-foreground whitespace-nowrap">{u.mobile || '—'}</td>
                     <td className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3.5 whitespace-nowrap">
                       <span className={cn("px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[11px] font-bold inline-block", u.role === 'admin' ? 'bg-primary/10 text-primary' : 'bg-secondary text-secondary-foreground')}>
                         {roleLabels[u.role] || u.role}
@@ -183,6 +187,10 @@ export function Users() {
                 <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary text-left" dir="ltr" />
               </div>
 
+              <div>
+                <label className="block text-xs font-bold mb-1.5">شماره موبایل</label>
+                <input type="text" value={formData.mobile || ''} onChange={e => setFormData({...formData, mobile: e.target.value})} className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary text-left" dir="ltr" placeholder="09xxxxxxxxx" />
+              </div>
               <div>
                 <label className="block text-xs font-bold mb-1.5">نقش</label>
                 <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">

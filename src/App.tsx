@@ -12,7 +12,6 @@ import { Warehouse } from './pages/Warehouse';
 import { Purchasing } from './pages/Purchasing';
 import { Users } from './pages/Users';
 import { Settings } from './pages/Settings';
-import { Help } from './pages/Help';
 import { About } from './pages/About';
 
 export default function App() {
@@ -33,8 +32,7 @@ export default function App() {
                   <Route path="/purchasing" element={<Purchasing />} />
                   <Route path="/users" element={<Users />} />
                   <Route path="/settings" element={<Settings />} />
-                  <Route path="/help" element={<Help />} />
-                  <Route path="/about" element={<About />} />
+                                    <Route path="/about" element={<About />} />
                 </Route>
               </Routes>
             </ToastProvider>

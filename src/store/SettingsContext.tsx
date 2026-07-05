@@ -5,6 +5,13 @@ interface Settings {
   projectName: string;
   companyName: string;
   logoUrl: string;
+  smsEnabled?: boolean;
+  smsApiKey?: string;
+  smsLineNumber?: string;
+  smsNotifyRequester?: boolean;
+  smsNotifySupervisor?: boolean;
+  smsNotifyStorekeeper?: boolean;
+  smsNotifyPurchaser?: boolean;
 }
 
 interface SettingsContextType {

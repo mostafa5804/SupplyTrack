@@ -21,6 +21,51 @@ let REQUESTS: any[] = [];
 let requestCounter = 1000;
 let logCounter = 1;
 let reqItemCounter = 1;
+
+// SMS Helper
+async function sendSms(mobiles: string[], messageText: string, targetRole: 'requester' | 'supervisor' | 'storekeeper' | 'purchaser' = 'requester') {
+  if (!SETTINGS.smsEnabled || !SETTINGS.smsApiKey) return;
+  
+  if (targetRole === 'requester' && !SETTINGS.smsNotifyRequester) return;
+  if (targetRole === 'supervisor' && !SETTINGS.smsNotifySupervisor) return;
+  if (targetRole === 'storekeeper' && !SETTINGS.smsNotifyStorekeeper) return;
+  if (targetRole === 'purchaser' && !SETTINGS.smsNotifyPurchaser) return;
+
+  if (!mobiles || mobiles.length === 0) return;
+  const validMobiles = mobiles.filter(m => m && m.trim().length >= 10);
+  if (validMobiles.length === 0) return;
+
+  try {
+    const response = await fetch('https://api.sms.ir/v1/send/bulk', {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': SETTINGS.smsApiKey,
+        'Content-Type': 'application/json',
+        'ACCEPT': 'application/json'
+      },
+      body: JSON.stringify({
+        lineNumber: Number(SETTINGS.smsLineNumber || 300000000000),
+        messageText,
+        mobiles: validMobiles,
+        sendDateTime: null
+      })
+    });
+    const data = await response.json();
+    console.log('SMS sent:', data);
+  } catch (err) {
+    console.error('Error sending SMS:', err);
+  }
+}
+
+function getMobilesByRole(role: string): string[] {
+  return USERS.filter(u => u.role === role || u.role === 'admin').map(u => u.mobile).filter(Boolean) as string[];
+}
+
+function getUserMobile(id: number): string[] {
+  const u = USERS.find(u => u.id === id);
+  return u && u.mobile ? [u.mobile] : [];
+}
+
 let SETTINGS: any = { projectName: 'سامانه درخواست کالا', companyName: 'شرکت فولاد صنعت', logoUrl: '' };
 let INVENTORY: any[] = [];
 
@@ -176,6 +221,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     user.username = username;
     user.role = role;
     user.department = department;
+      user.mobile = mobile;
     if (password) {
       user.passwordHash = bcrypt.hashSync(password, 10);
     }
@@ -245,6 +291,13 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
       }]
     };
     REQUESTS.push(newReq);
+    
+    const requesterMobiles = getUserMobile(req.user.id);
+    const supervisorMobiles = getMobilesByRole('supervisor');
+    
+    sendSms(requesterMobiles, `SupplyTrack\nدرخواست جدید شما با شماره ${newReq.id} ثبت شد و در انتظار تایید سرپرست است.`, 'requester');
+    sendSms(supervisorMobiles, `SupplyTrack\nدرخواست جدید شماره ${newReq.id} توسط ${req.user.name} ثبت شد و نیازمند بررسی شماست.`, 'supervisor');
+    
     res.json(newReq);
   });
 
@@ -317,6 +370,10 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
         icon: '✅',
         comment
       });
+      const requesterMobiles = getUserMobile(request.requesterId);
+      const storekeeperMobiles = getMobilesByRole('storekeeper');
+      sendSms(requesterMobiles, `SupplyTrack\nدرخواست شماره ${request.id} شما توسط سرپرست تایید شد.`, 'requester');
+      sendSms(storekeeperMobiles, `SupplyTrack\nدرخواست شماره ${request.id} جهت بررسی موجودی انبار به کارتابل شما افزوده شد.`, 'storekeeper');
     } else if (action === 'reject') {
       request.status = 'rejected';
       request.logs.push({
@@ -327,6 +384,8 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
         icon: '❌',
         comment
       });
+      const requesterMobiles = getUserMobile(request.requesterId);
+      sendSms(requesterMobiles, `SupplyTrack\nدرخواست شماره ${request.id} شما توسط سرپرست رد شد.`, 'requester');
     }
     res.json(request);
   });
@@ -360,7 +419,17 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
           icon: '🎯'
         });
     }
-
+    
+    if (hasShortage) {
+        const purchaserMobiles = getMobilesByRole('purchaser');
+        sendSms(purchaserMobiles, `SupplyTrack\nبرای درخواست شماره ${request.id} کسری انبار ثبت شد و نیازمند خرید اقلام است.`, 'purchaser');
+    }
+    
+    if (request.items.some((it: any) => it.whQty > 0)) {
+        const requesterMobiles = getUserMobile(request.requesterId);
+        sendSms(requesterMobiles, `SupplyTrack\nتأمین از انبار برای درخواست شماره ${request.id} انجام شد و هم‌اکنون آماده تحویل می‌باشد.`, 'requester');
+    }
+    
     res.json(request);
   });
 
@@ -402,7 +471,10 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
         action: allDelivered ? 'تحویل کامل به درخواست‌کننده' : 'تحویل ناقص به درخواست‌کننده',
         icon: '🎁'
       });
-
+      
+      const requesterMobiles = getUserMobile(request.requesterId);
+      sendSms(requesterMobiles, `SupplyTrack\nاقلام درخواست شماره ${request.id} به شما تحویل داده شد.`, 'requester');
+      
       saveDB();
       res.json(request);
     } catch (err) {
@@ -458,7 +530,15 @@ app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
     } else {
       request.status = 'partial_purchase';
     }
-
+    
+    if (somePurchased) {
+        const supervisorMobiles = getMobilesByRole('supervisor');
+        const requesterMobiles = getUserMobile(request.requesterId);
+        
+        sendSms(supervisorMobiles, `SupplyTrack\nکالاهای مربوط به درخواست شماره ${request.id} خریداری شده و به انبار تحویل داده شد.`, 'supervisor');
+        sendSms(requesterMobiles, `SupplyTrack\nکالاهای درخواستی شما برای شماره ${request.id} خریداری شده و در انبار آماده تحویل است.`, 'requester');
+    }
+    
     res.json(request);
   });
 
@@ -488,8 +568,14 @@ app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
         action: 'تحویل نهایی به درخواست‌کننده',
         icon: '🎯'
       });
+      
+      const supervisorMobiles = getMobilesByRole('supervisor');
+      const requesterMobiles = getUserMobile(r.requesterId);
+      
+      sendSms(supervisorMobiles, `SupplyTrack\nکالاهای مربوط به درخواست شماره ${r.id} خریداری شده و به انبار تحویل داده شد.`, 'supervisor');
+      sendSms(requesterMobiles, `SupplyTrack\nکالاهای درخواستی شما برای شماره ${r.id} خریداری شده و در انبار آماده تحویل است.`, 'requester');
+      
     });
-
     res.json({ success: true, count: purchaseReqs.length });
   });
 

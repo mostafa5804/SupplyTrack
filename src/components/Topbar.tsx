@@ -13,7 +13,7 @@ const routeTitles: Record<string, string> = {
   '/purchasing': 'لیست خرید',
   '/users': 'مدیریت کاربران',
   '/settings': 'تنظیمات سامانه',
-  '/help': 'راهنمای استفاده',
+  '/about': 'درباره برنامه',
 };
 
 const roleColors: Record<string, string> = {
@@ -78,9 +78,9 @@ export function Topbar() {
         
 
         <button 
-          onClick={() => navigate('/help')}
+          onClick={() => navigate('/about')}
           className="p-2 rounded-lg bg-secondary text-primary hover:bg-border transition-colors"
-          title="راهنمای استفاده"
+          title="درباره برنامه"
         >
           <BookOpen size={20} />
         </button>

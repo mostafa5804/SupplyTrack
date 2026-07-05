@@ -6,6 +6,7 @@ export interface User {
   name: string;
   role: Role;
   department?: string;
+  mobile?: string;
 }
 
 export interface RequestItem {
