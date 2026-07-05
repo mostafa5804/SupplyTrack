@@ -25,7 +25,7 @@ export function DashboardCharts({ requests }: Props) {
   const itemCounts: Record<string, number> = {};
   requests.forEach(r => {
     r.items.forEach(it => {
-      itemCounts[it.itemName] = (itemCounts[it.itemName] || 0) + it.reqQty;
+      itemCounts[it.itemName] = (itemCounts[it.itemName] || 0) + (it.reqQty || 0);
     });
   });
 

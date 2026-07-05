@@ -313,7 +313,7 @@ export function Requests() {
                           }
                           setNewReqItems(newArr);
                         }}
-                        className="w-24 bg-card border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary text-center"
+                        className="w-16 md:w-24 bg-card border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary text-center"
                       />
                       
                       <button 

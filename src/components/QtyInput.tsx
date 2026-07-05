@@ -44,8 +44,8 @@ export function QtyInput({ value, onChange, min = 0, max, className, inputClassN
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={cn("bg-background border border-border rounded-md px-1 text-center font-bold outline-none focus:ring-2 h-8 md:h-7 text-xs sm:text-sm", inputClassName)}
-        style={{ minWidth: '40px', WebkitAppearance: 'none', margin: 0 }}
+        className={cn("bg-background border border-border rounded-md px-1 text-center font-bold outline-none focus:ring-2 h-8 md:h-7 w-12 md:w-16 text-xs sm:text-sm", inputClassName)}
+        style={{ WebkitAppearance: 'none', margin: 0 }}
       />
       <button 
         type="button" 

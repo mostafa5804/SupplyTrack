@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Printer, Eye, ArrowRight } from 'lucide-react';
 import { Request } from '../types';
-import { STATUS_MAP, cn } from '../lib/utils';
+import { STATUS_MAP, cn, farsiNum } from '../lib/utils';
 import { useSettings } from '../store/SettingsContext';
 
 interface RequestDetailsModalProps {
@@ -84,7 +84,7 @@ export function RequestDetailsModal({ request, onClose }: RequestDetailsModalPro
                         <td className="p-1 border-l border-black font-bold text-xs">{idx + 1}</td>
                         <td className="p-1 border-l border-black text-right pr-2 font-bold">{item?.itemName || ''}</td>
                         <td className="p-1 border-l border-black">{item?.unit || ''}</td>
-                        <td className="p-1 border-l border-black font-bold">{item?.reqQty || ''}</td>
+                        <td className="p-1 border-l border-black font-bold">{item?.reqQty ? farsiNum(item.reqQty) : ''}</td>
                         <td className="p-1 text-right pr-2 text-xs">{item?.description || ''}</td>
                       </tr>
                     );
@@ -140,10 +140,10 @@ export function RequestDetailsModal({ request, onClose }: RequestDetailsModalPro
                       <tr key={it.id}>
                         <td className="py-2.5 px-4 text-muted-foreground">{idx + 1}</td>
                         <td className="py-2.5 px-4 font-medium">{it.itemName}</td>
-                        <td className="py-2.5 px-4 text-center font-bold">{it.reqQty} <span className="font-normal text-xs text-muted-foreground">{it.unit}</span></td>
+                        <td className="py-2.5 px-4 text-center font-bold">{farsiNum(it.reqQty || 0)} <span className="font-normal text-xs text-muted-foreground">{it.unit}</span></td>
                         <td className="py-2.5 px-4 text-center font-bold">
                           {request.status !== 'pending_supervisor' ? (
-                            <>{it.supQty} <span className="font-normal text-xs text-muted-foreground">{it.unit}</span></>
+                            <>{farsiNum(it.supQty || 0)} <span className="font-normal text-xs text-muted-foreground">{it.unit}</span></>
                           ) : (
                             <span className="text-muted-foreground text-xs">—</span>
                           )}
