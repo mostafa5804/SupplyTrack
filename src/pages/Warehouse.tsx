@@ -277,7 +277,7 @@ export function Warehouse() {
                 </div>
               </div>
 
-              <div className="p-4 lg:p-6 border-t border-border flex justify-end bg-card print:hidden">
+              <div className="p-4 lg:p-6 border-t border-border flex justify-end bg-card print:hidden sticky bottom-0 z-10">
                 {isDeliveryMode ? (
                   <button onClick={() => handleDeliver(r)} className="w-full sm:w-auto justify-center bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 lg:py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2">
                     <PackageCheck size={16} /> ثبت مقدار تحویلی

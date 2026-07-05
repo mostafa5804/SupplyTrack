@@ -3,7 +3,7 @@ import { api, farsiNum } from '../lib/utils';
 import { QtyInput } from '../components/QtyInput';
 import { Request } from '../types';
 import { RequestDetailsModal } from '../components/RequestDetailsModal';
-import { Printer } from 'lucide-react';
+import { Printer, Check, X } from 'lucide-react';
 
 export function Supervisor() {
   const [requests, setRequests] = useState<Request[]>([]);
@@ -153,10 +153,10 @@ export function Supervisor() {
                               <div className="flex flex-col gap-1.5 w-full max-w-[200px] mx-auto">
                                 <div className="flex justify-center gap-1">
                                   <button onClick={() => handleItemAction(r.id, idx, 'approve', it.reqQty)} className={`p-1.5 rounded-md border ${it.supQty > 0 ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-border hover:bg-secondary text-muted-foreground'} transition-colors`} title="تأیید کامل">
-                                    ✅
+                                    <Check size={16} />
                                   </button>
                                   <button onClick={() => handleItemAction(r.id, idx, 'reject', it.reqQty)} className={`p-1.5 rounded-md border ${it.supQty === 0 ? 'bg-destructive/10 border-destructive text-destructive' : 'bg-background border-border hover:bg-secondary text-muted-foreground'} transition-colors`} title="رد / حذف">
-                                    ❌
+                                    <X size={16} />
                                   </button>
                                 </div>
                                 <input 
@@ -200,8 +200,8 @@ export function Supervisor() {
                               onChange={(val) => handleQtyChange(r.id, idx, val, it.reqQty)}
                             />
                             <div className="flex gap-1">
-                              <button onClick={() => handleItemAction(r.id, idx, 'approve', it.reqQty)} className={`p-1 rounded-md border ${it.supQty > 0 ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-border hover:bg-secondary text-muted-foreground'}`}>✅</button>
-                              <button onClick={() => handleItemAction(r.id, idx, 'reject', it.reqQty)} className={`p-1 rounded-md border ${it.supQty === 0 ? 'bg-destructive/10 border-destructive text-destructive' : 'bg-background border-border hover:bg-secondary text-muted-foreground'}`}>❌</button>
+                              <button onClick={() => handleItemAction(r.id, idx, 'approve', it.reqQty)} className={`p-1 rounded-md border ${it.supQty > 0 ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-border hover:bg-secondary text-muted-foreground'}`}><Check size={16} /></button>
+                              <button onClick={() => handleItemAction(r.id, idx, 'reject', it.reqQty)} className={`p-1 rounded-md border ${it.supQty === 0 ? 'bg-destructive/10 border-destructive text-destructive' : 'bg-background border-border hover:bg-secondary text-muted-foreground'}`}><X size={16} /></button>
                             </div>
                           </div>
                         </div>
@@ -225,12 +225,12 @@ export function Supervisor() {
                     className="w-full bg-background border border-border rounded-lg p-3 text-sm outline-none focus:ring-2 focus:ring-primary min-h-[60px]"
                   ></textarea>
 
-                  <div className="flex flex-col sm:flex-row gap-2 lg:gap-3 mt-4">
+                  <div className="flex flex-col sm:flex-row gap-2 lg:gap-3 mt-4 sticky bottom-0 bg-card p-4 -mx-4 -mb-4 sm:mx-0 sm:mb-0 sm:p-0 sm:static sm:bg-transparent border-t border-border sm:border-0 z-10">
                     <button onClick={() => handleApprove(r)} className="w-full sm:w-auto justify-center flex items-center bg-primary hover:bg-blue-600 text-white px-4 py-2.5 lg:py-2 rounded-lg text-xs font-bold transition-colors">
-                      ✅ تأیید درخواست
+                      <Check size={16} className="ml-1" /> تأیید درخواست
                     </button>
                     <button onClick={() => handleReject(r)} className="w-full sm:w-auto justify-center flex items-center bg-destructive/10 text-destructive hover:bg-destructive hover:text-white px-4 py-2.5 lg:py-2 rounded-lg text-xs font-bold transition-colors">
-                      ❌ رد درخواست
+                      <X size={16} className="ml-1" /> رد درخواست
                     </button>
                   </div>
                 </div>

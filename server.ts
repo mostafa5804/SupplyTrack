@@ -126,6 +126,16 @@ async function startServer() {
     res.json(SETTINGS);
   });
 
+  app.post('/api/reset', authenticateToken, (req: any, res) => {
+    if (req.user.role !== 'admin') return res.sendStatus(403);
+    REQUESTS.length = 0;
+    requestCounter = 1000;
+    reqItemCounter = 1;
+    logCounter = 1;
+    saveDB();
+    res.json({ success: true, message: 'اطلاعات با موفقیت بازنشانی شد.' });
+  });
+
   
 
 app.get('/api/inventory', authenticateToken, (req, res) => {
@@ -284,6 +294,19 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     if (!request) return res.status(404).json({ message: 'Not found' });
     
     if (action === 'approve') {
+      // Check for quantity modifications
+      items.forEach((newItem: any) => {
+        const oldItem = request.items.find((it: any) => it.id === newItem.id);
+        if (oldItem && newItem.supQty !== oldItem.reqQty) {
+          request.logs.push({
+            id: logCounter++,
+            user: req.user.name,
+            date: farsiDate() + ' ' + farsiTime(),
+            action: `ویرایش مقدار تایید شده "${newItem.itemName}" از ${oldItem.reqQty} به ${newItem.supQty} ${newItem.unit}`,
+            icon: '✏️'
+          });
+        }
+      });
       request.status = 'warehouse_check';
       request.items = items; // updated items with supQty
       request.logs.push({

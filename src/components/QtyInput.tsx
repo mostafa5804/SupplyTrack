@@ -28,14 +28,14 @@ export function QtyInput({ value, onChange, min = 0, max, className, inputClassN
   };
 
   return (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div className={cn("flex items-center gap-1 shrink-0", className)}>
       <button 
         type="button" 
         onClick={handleDec}
         disabled={value !== '' && parseInt(value as string) <= min}
-        className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md disabled:opacity-50 transition-colors"
+        className="w-10 h-10 md:w-8 md:h-8 flex shrink-0 items-center justify-center bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg disabled:opacity-50 transition-colors"
       >
-        <Minus size={14} />
+        <Minus size={18} />
       </button>
       <input
         type="number"
@@ -44,16 +44,16 @@ export function QtyInput({ value, onChange, min = 0, max, className, inputClassN
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={cn("bg-background border border-border rounded-md px-1 text-center font-bold outline-none focus:ring-2 h-8 md:h-7 w-12 md:w-16 text-xs sm:text-sm", inputClassName)}
-        style={{ WebkitAppearance: 'none', margin: 0 }}
+        className={cn("bg-background border border-border rounded-lg text-center font-bold outline-none focus:ring-2 h-10 md:h-8 w-12 sm:w-14 shrink-0 text-sm", inputClassName)}
+        style={{ WebkitAppearance: 'none', margin: 0, padding: 0 }}
       />
       <button 
         type="button" 
         onClick={handleInc}
         disabled={max !== undefined && value !== '' && parseInt(value as string) >= max}
-        className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md disabled:opacity-50 transition-colors"
+        className="w-10 h-10 md:w-8 md:h-8 flex shrink-0 items-center justify-center bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg disabled:opacity-50 transition-colors"
       >
-        <Plus size={14} />
+        <Plus size={18} />
       </button>
     </div>
   );

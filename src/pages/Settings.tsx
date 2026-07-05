@@ -45,6 +45,18 @@ export function Settings() {
     }
   };
 
+  const handleResetData = async () => {
+    if (window.confirm('⚠️ اخطار: آیا از پاک کردن تمام اطلاعات (درخواست‌ها، تاریخچه و ...) اطمینان دارید؟ این عمل غیرقابل بازگشت است.')) {
+      try {
+        await api.post('/reset');
+        alert('تمام اطلاعات سیستم با موفقیت پاک شد.');
+        window.location.reload();
+      } catch (e) {
+        alert('خطا در پاک کردن اطلاعات');
+      }
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col space-y-4 lg:space-y-6 max-w-2xl mx-auto w-full">
       <div className="flex items-center justify-between shrink-0">
@@ -92,7 +104,10 @@ export function Settings() {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-border flex justify-end">
+        <div className="pt-4 border-t border-border flex justify-between">
+          <button onClick={handleResetData} className="bg-destructive/10 hover:bg-destructive text-destructive hover:text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
+            🗑️ پاکسازی کل اطلاعات
+          </button>
           <button onClick={handleSubmit} className="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
             <Save size={18} /> ذخیره تنظیمات
           </button>
