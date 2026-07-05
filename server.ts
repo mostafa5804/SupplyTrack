@@ -23,6 +23,15 @@ let logCounter = 1;
 let reqItemCounter = 1;
 
 // SMS Helper
+
+function getSmsMessage(templateKey: string, variables: { id?: number, user?: string }): string {
+  if (!SETTINGS.smsTemplates) return '';
+  let template = SETTINGS.smsTemplates[templateKey] || '';
+  if (variables.id) template = template.replace(/\{\{id\}\}/g, variables.id.toString());
+  if (variables.user) template = template.replace(/\{\{user\}\}/g, variables.user);
+  return template;
+}
+
 async function sendSms(mobiles: string[], messageText: string, targetRole: 'requester' | 'supervisor' | 'storekeeper' | 'purchaser' = 'requester') {
   if (!SETTINGS.smsEnabled || !SETTINGS.smsApiKey) return;
   
@@ -52,8 +61,27 @@ async function sendSms(mobiles: string[], messageText: string, targetRole: 'requ
     });
     const data = await response.json();
     console.log('SMS sent:', data);
-  } catch (err) {
+    
+    SMS_LOGS.unshift({
+      id: Date.now() + Math.floor(Math.random()*100),
+      date: farsiDate() + ' ' + farsiTime(),
+      mobiles: validMobiles.join(', '),
+      message: messageText,
+      status: data.status === 1 ? 'success' : 'failed',
+      error: data.status !== 1 ? data.message : null
+    });
+    if (SMS_LOGS.length > 200) SMS_LOGS.length = 200; // keep last 200
+  } catch (err: any) {
     console.error('Error sending SMS:', err);
+    SMS_LOGS.unshift({
+      id: Date.now() + Math.floor(Math.random()*100),
+      date: farsiDate() + ' ' + farsiTime(),
+      mobiles: validMobiles.join(', '),
+      message: messageText,
+      status: 'failed',
+      error: err.message || 'خطای شبکه'
+    });
+    if (SMS_LOGS.length > 200) SMS_LOGS.length = 200;
   }
 }
 
@@ -66,8 +94,21 @@ function getUserMobile(id: number): string[] {
   return u && u.mobile ? [u.mobile] : [];
 }
 
-let SETTINGS: any = { projectName: 'سامانه درخواست کالا', companyName: 'شرکت فولاد صنعت', logoUrl: '' };
+let SETTINGS: any = { projectName: 'سامانه درخواست کالا', companyName: 'شرکت فولاد صنعت', logoUrl: '',
+  smsTemplates: {
+    req_submitted_requester: "SupplyTrack\nدرخواست جدید شما با شماره {{id}} ثبت شد و در انتظار تایید سرپرست است.",
+    req_submitted_supervisor: "SupplyTrack\nدرخواست جدید شماره {{id}} توسط {{user}} ثبت شد و نیازمند بررسی شماست.",
+    req_approved_requester: "SupplyTrack\nدرخواست شماره {{id}} شما توسط سرپرست تایید شد.",
+    req_approved_storekeeper: "SupplyTrack\nدرخواست شماره {{id}} جهت بررسی موجودی انبار به کارتابل شما افزوده شد.",
+    req_rejected_requester: "SupplyTrack\nدرخواست شماره {{id}} شما توسط سرپرست رد شد.",
+    req_shortage_purchaser: "SupplyTrack\nبرای درخواست شماره {{id}} کسری انبار ثبت شد و نیازمند خرید اقلام است.",
+    req_wh_supplied_requester: "SupplyTrack\nتأمین از انبار برای درخواست شماره {{id}} انجام شد و هم‌اکنون آماده تحویل می‌باشد.",
+    req_delivered_requester: "SupplyTrack\nاقلام درخواست شماره {{id}} به شما تحویل داده شد.",
+    req_purchased_supervisor: "SupplyTrack\nکالاهای مربوط به درخواست شماره {{id}} خریداری شده و به انبار تحویل داده شد.",
+    req_purchased_requester: "SupplyTrack\nکالاهای درخواستی شما برای شماره {{id}} خریداری شده و در انبار آماده تحویل است."
+  } };
 let INVENTORY: any[] = [];
+let SMS_LOGS: any[] = [];
 
 function loadDB() {
   try {
@@ -79,8 +120,21 @@ function loadDB() {
       requestCounter = data.requestCounter || 1000;
       logCounter = data.logCounter || 1;
       reqItemCounter = data.reqItemCounter || 1;
-      SETTINGS = data.SETTINGS || { projectName: 'سامانه درخواست کالا', companyName: 'شرکت فولاد صنعت', logoUrl: '' };
+            SETTINGS = data.SETTINGS || { projectName: 'سامانه درخواست کالا', companyName: 'شرکت فولاد صنعت', logoUrl: '',
+  smsTemplates: {
+    req_submitted_requester: "SupplyTrack\nدرخواست جدید شما با شماره {{id}} ثبت شد و در انتظار تایید سرپرست است.",
+    req_submitted_supervisor: "SupplyTrack\nدرخواست جدید شماره {{id}} توسط {{user}} ثبت شد و نیازمند بررسی شماست.",
+    req_approved_requester: "SupplyTrack\nدرخواست شماره {{id}} شما توسط سرپرست تایید شد.",
+    req_approved_storekeeper: "SupplyTrack\nدرخواست شماره {{id}} جهت بررسی موجودی انبار به کارتابل شما افزوده شد.",
+    req_rejected_requester: "SupplyTrack\nدرخواست شماره {{id}} شما توسط سرپرست رد شد.",
+    req_shortage_purchaser: "SupplyTrack\nبرای درخواست شماره {{id}} کسری انبار ثبت شد و نیازمند خرید اقلام است.",
+    req_wh_supplied_requester: "SupplyTrack\nتأمین از انبار برای درخواست شماره {{id}} انجام شد و هم‌اکنون آماده تحویل می‌باشد.",
+    req_delivered_requester: "SupplyTrack\nاقلام درخواست شماره {{id}} به شما تحویل داده شد.",
+    req_purchased_supervisor: "SupplyTrack\nکالاهای مربوط به درخواست شماره {{id}} خریداری شده و به انبار تحویل داده شد.",
+    req_purchased_requester: "SupplyTrack\nکالاهای درخواستی شما برای شماره {{id}} خریداری شده و در انبار آماده تحویل است."
+  } };
       INVENTORY = data.INVENTORY || [];
+      SMS_LOGS = data.SMS_LOGS || [];
       return;
     }
   } catch(e) {
@@ -101,7 +155,13 @@ function loadDB() {
 }
 
 function saveDB() {
-  const data = { USERS, userCounter, REQUESTS, requestCounter, logCounter, reqItemCounter, SETTINGS, INVENTORY };
+  const data = { USERS, userCounter,       REQUESTS,
+      requestCounter,
+      logCounter,
+      reqItemCounter,
+      SETTINGS,
+      INVENTORY,
+      SMS_LOGS };
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
   } catch(e) {
@@ -159,6 +219,33 @@ async function startServer() {
 
   app.get('/api/me', authenticateToken, (req: any, res) => {
     res.json({ user: req.user });
+  });
+
+  
+  app.get('/api/sms/logs', authenticateToken, (req: any, res) => {
+    if (req.user.role !== 'admin') return res.sendStatus(403);
+    res.json(SMS_LOGS);
+  });
+
+  app.get('/api/sms/credit', authenticateToken, async (req: any, res) => {
+    if (req.user.role !== 'admin') return res.sendStatus(403);
+    if (!SETTINGS.smsApiKey) return res.json({ credit: 0, error: 'API Key تنظیم نشده است' });
+    try {
+      const response = await fetch('https://api.sms.ir/v1/credit', {
+        headers: {
+          'X-API-KEY': SETTINGS.smsApiKey,
+          'ACCEPT': 'application/json'
+        }
+      });
+      const data = await response.json();
+      if (data.status === 1) {
+        res.json({ credit: data.data });
+      } else {
+        res.json({ credit: 0, error: data.message });
+      }
+    } catch (err: any) {
+      res.json({ credit: 0, error: 'خطا در ارتباط با سرور پیامک' });
+    }
   });
 
   app.get('/api/settings', (req, res) => {
@@ -298,8 +385,8 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     const requesterMobiles = getUserMobile(req.user.id);
     const supervisorMobiles = getMobilesByRole('supervisor');
     
-    sendSms(requesterMobiles, `SupplyTrack\nدرخواست جدید شما با شماره ${newReq.id} ثبت شد و در انتظار تایید سرپرست است.`, 'requester');
-    sendSms(supervisorMobiles, `SupplyTrack\nدرخواست جدید شماره ${newReq.id} توسط ${req.user.name} ثبت شد و نیازمند بررسی شماست.`, 'supervisor');
+    sendSms(requesterMobiles, getSmsMessage('req_submitted_requester', { id: newReq.id }), 'requester');
+    sendSms(supervisorMobiles, getSmsMessage('req_submitted_supervisor', { id: newReq.id, user: req.user.name }), 'supervisor');
     
     res.json(newReq);
   });
@@ -375,8 +462,8 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
       });
       const requesterMobiles = getUserMobile(request.requesterId);
       const storekeeperMobiles = getMobilesByRole('storekeeper');
-      sendSms(requesterMobiles, `SupplyTrack\nدرخواست شماره ${request.id} شما توسط سرپرست تایید شد.`, 'requester');
-      sendSms(storekeeperMobiles, `SupplyTrack\nدرخواست شماره ${request.id} جهت بررسی موجودی انبار به کارتابل شما افزوده شد.`, 'storekeeper');
+      sendSms(requesterMobiles, getSmsMessage('req_approved_requester', { id: request.id }), 'requester');
+      sendSms(storekeeperMobiles, getSmsMessage('req_approved_storekeeper', { id: request.id }), 'storekeeper');
     } else if (action === 'reject') {
       request.status = 'rejected';
       request.logs.push({
@@ -388,7 +475,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
         comment
       });
       const requesterMobiles = getUserMobile(request.requesterId);
-      sendSms(requesterMobiles, `SupplyTrack\nدرخواست شماره ${request.id} شما توسط سرپرست رد شد.`, 'requester');
+      sendSms(requesterMobiles, getSmsMessage('req_rejected_requester', { id: request.id }), 'requester');
     }
     res.json(request);
   });
@@ -425,12 +512,12 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
     
     if (hasShortage) {
         const purchaserMobiles = getMobilesByRole('purchaser');
-        sendSms(purchaserMobiles, `SupplyTrack\nبرای درخواست شماره ${request.id} کسری انبار ثبت شد و نیازمند خرید اقلام است.`, 'purchaser');
+        sendSms(purchaserMobiles, getSmsMessage('req_shortage_purchaser', { id: request.id }), 'purchaser');
     }
     
     if (request.items.some((it: any) => it.whQty > 0)) {
         const requesterMobiles = getUserMobile(request.requesterId);
-        sendSms(requesterMobiles, `SupplyTrack\nتأمین از انبار برای درخواست شماره ${request.id} انجام شد و هم‌اکنون آماده تحویل می‌باشد.`, 'requester');
+        sendSms(requesterMobiles, getSmsMessage('req_wh_supplied_requester', { id: request.id }), 'requester');
     }
     
     res.json(request);
@@ -476,7 +563,7 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
       });
       
       const requesterMobiles = getUserMobile(request.requesterId);
-      sendSms(requesterMobiles, `SupplyTrack\nاقلام درخواست شماره ${request.id} به شما تحویل داده شد.`, 'requester');
+      sendSms(requesterMobiles, getSmsMessage('req_delivered_requester', { id: request.id }), 'requester');
       
       saveDB();
       res.json(request);
@@ -538,8 +625,8 @@ app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
         const supervisorMobiles = getMobilesByRole('supervisor');
         const requesterMobiles = getUserMobile(request.requesterId);
         
-        sendSms(supervisorMobiles, `SupplyTrack\nکالاهای مربوط به درخواست شماره ${request.id} خریداری شده و به انبار تحویل داده شد.`, 'supervisor');
-        sendSms(requesterMobiles, `SupplyTrack\nکالاهای درخواستی شما برای شماره ${request.id} خریداری شده و در انبار آماده تحویل است.`, 'requester');
+        sendSms(supervisorMobiles, getSmsMessage('req_purchased_supervisor', { id: request.id }), 'supervisor');
+        sendSms(requesterMobiles, getSmsMessage('req_purchased_requester', { id: request.id }), 'requester');
     }
     
     res.json(request);
@@ -575,8 +662,8 @@ app.put('/api/requests/:id/purchase', authenticateToken, (req: any, res) => {
       const supervisorMobiles = getMobilesByRole('supervisor');
       const requesterMobiles = getUserMobile(r.requesterId);
       
-      sendSms(supervisorMobiles, `SupplyTrack\nکالاهای مربوط به درخواست شماره ${r.id} خریداری شده و به انبار تحویل داده شد.`, 'supervisor');
-      sendSms(requesterMobiles, `SupplyTrack\nکالاهای درخواستی شما برای شماره ${r.id} خریداری شده و در انبار آماده تحویل است.`, 'requester');
+      sendSms(supervisorMobiles, getSmsMessage('req_purchased_supervisor', { id: r.id }), 'supervisor');
+      sendSms(requesterMobiles, getSmsMessage('req_purchased_requester', { id: r.id }), 'requester');
       
     });
     res.json({ success: true, count: purchaseReqs.length });
