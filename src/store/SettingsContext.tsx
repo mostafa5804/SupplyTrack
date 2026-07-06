@@ -12,6 +12,8 @@ interface Settings {
   smsNotifySupervisor?: boolean;
   smsNotifyStorekeeper?: boolean;
   smsNotifyPurchaser?: boolean;
+  smsSendMode?: 'bulk' | 'verify';
+  smsTemplateIds?: { [key: string]: string };
 }
 
 interface SettingsContextType {
